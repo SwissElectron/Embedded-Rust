@@ -4,5 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+cargo-binutils = "0.3.6"
 cortex-m-rt = "0.7.5"
 panic-halt = "1.0.0"
+probe-rs = "0.24.0"
+serde = { version = "1.0", default-features = false, features = ["derive"] }
