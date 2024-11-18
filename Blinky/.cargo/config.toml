@@ -1,6 +1,8 @@
-# .cargo/config.toml
 [build]
-target = "thumbv7em-none-eabihf"
+target = "thumbv7em-none-eabihf" 
 
 [target.thumbv7em-none-eabihf]
-rustflags = ["-C","link-arg=-Tlink.x"]  # Replace with the runner tool of choice
+rustflags = ["-C", "link-arg=-Tlink.x"]
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+runner = "gdb-multiarch -x openocd.gdb"

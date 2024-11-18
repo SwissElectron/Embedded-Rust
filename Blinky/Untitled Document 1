@@ -12,19 +12,23 @@ fn main() -> ! {
     hprintln!("Hello, world!");
     clock_config();
     //definitions of the GPIO configuration addressses for port E
-    const GPIOE_MODER_ADDR: *mut u32 = 0x4800_1000 as *mut u32;     //Address of PortE MODER Register          //Mask to set pin9 as Output
-    const GPIOE_BSRR_ADDR: *mut u32 = 0x4800_1018 as *mut u32;      //Address of PortE BSSR Register (Bit Set/Reset Register, to avoid writing direclty in output register)
-    const PIN_OUT_POS: u32 = 11;
-    const BSSR_HALF_SIZE: u32 = 16;
+    const GPIOE_MODER_ADDR: *mut u32 = 0x4800_1000 as *mut u32;     //Address of PortE MODER Register 
+    const GPIOE_MODER_MASK: u32 = 0x5554_000 as u32;                //Mask to set pin9 as Output
+    const GPIOE_OTYPER_ADDR: *mut u32 = 0x4800_1004 as *mut u32;
+    const GPIOE_OTYPER_MASK: u32 = 0x0000_0000 as u32;
+    const GPIOE_BSRR_ADDR: *mut u32 = 0x4800_0018 as *mut u32;       //Address of PortE BSSR Register (Bit Set/Reset Register, to avoid writing direclty in output register)
 
-    unsafe {
-        let moder_value = read_volatile(GPIOE_MODER_ADDR);
-        write_volatile(GPIOE_MODER_ADDR, (moder_value & !(0b11 << (2 * PIN_OUT_POS))) | (0b01 << (2 * PIN_OUT_POS)));
+    unsafe{
+        write_volatile(GPIOE_MODER_ADDR, GPIOE_MODER_MASK);
+        write_volatile(GPIOE_OTYPER_ADDR,GPIOE_OTYPER_MASK);
     }
 
+    const GPIO_ACTIVE: u32 = 1 as u32;
+    const PIN_OUT_POS: u32 = 9;
+    const BSSR_HALF_SIZE: u32 = 16;
     let mut is_on: bool = false;
     unsafe {
-    write_volatile(GPIOE_BSRR_ADDR, 1 << 11);
+    write_volatile(GPIOE_BSRR_ADDR, GPIO_ACTIVE << PIN_OUT_POS);
     }
     loop{
         //if is_on {
@@ -96,7 +100,7 @@ fn clock_config(){
 
         //Enable clock for GPIOE
         let mut RCC_AHBENR = read_volatile(RCC_AHBENR_ADDR);
-        RCC_AHBENR |= 0x0020_0000 as u32;
+        RCC_AHBENR |= 0x0002_0000 as u32;
         write_volatile(RCC_AHBENR_ADDR, RCC_AHBENR);
 
     }
