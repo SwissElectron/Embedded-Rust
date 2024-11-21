@@ -2,3 +2,4 @@ Blinky/target/
 app/
 Blinky_HAL/target
 PWM_LED/target
+Simple_Servo/target
